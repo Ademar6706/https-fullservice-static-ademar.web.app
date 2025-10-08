@@ -1,63 +1,43 @@
-'use server';
+"use client";
 
-/**
- * @fileOverview This file defines a Genkit flow for analyzing past service data to identify common issues for specific vehicle models.
- *
- * - analyzeServiceData - A function that orchestrates the analysis of service data.
- * - AnalyzeServiceDataInput - The input type for the analyzeServiceData function.
- * - AnalyzeServiceDataOutput - The output type for the analyzeServiceData function.
- */
+export type AnalyzeInput = {
+  descripcion?: string;
+  km?: number;
+  anio?: number;
+  motivo?: string;
+};
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+export type AnalyzeResult = {
+  summary: string;
+  flags: string[];
+  suggestions: string[];
+};
 
-const AnalyzeServiceDataInputSchema = z.object({
-  vehicleModel: z.string().describe('The model of the vehicle to analyze service data for.'),
-});
-export type AnalyzeServiceDataInput = z.infer<typeof AnalyzeServiceDataInputSchema>;
+export function analyzeServiceData(input: AnalyzeInput): AnalyzeResult {
+  const desc = (input.descripcion || "").toLowerCase();
+  const motivo = (input.motivo || "").toLowerCase();
 
-const AnalyzeServiceDataOutputSchema = z.object({
-  commonIssues: z
-    .string()
-    .describe(
-      'A summary of common issues identified for the specified vehicle model based on past service data.'
-    ),
-  suggestedServices: z
-    .string()
-    .describe(
-      'Proactive service suggestions based on the identified common issues, aimed at addressing potential problems.'
-    ),
-  inventoryRecommendations: z
-    .string()
-    .describe(
-      'Recommendations for optimizing inventory based on the common issues and suggested services, to ensure necessary parts are readily available.'
-    ),
-});
-export type AnalyzeServiceDataOutput = z.infer<typeof AnalyzeServiceDataOutputSchema>;
+  const flags: string[] = [];
+  const suggestions: string[] = [];
 
-export async function analyzeServiceData(input: AnalyzeServiceDataInput): Promise<AnalyzeServiceDataOutput> {
-  return analyzeServiceDataFlow(input);
-}
-
-const analyzeServiceDataPrompt = ai.definePrompt({
-  name: 'analyzeServiceDataPrompt',
-  input: {schema: AnalyzeServiceDataInputSchema},
-  output: {schema: AnalyzeServiceDataOutputSchema},
-  prompt: `You are an expert automotive service analyst.
-  Analyze past service data for {{vehicleModel}} vehicles to identify common issues. Based on these issues, suggest proactive services and provide inventory recommendations.
-  Return a JSON object with commonIssues, suggestedServices, and inventoryRecommendations fields. The commonIssues field should summarize the most frequent problems. The suggestedServices field should list services that can address these problems. The inventoryRecommendations should suggest parts to keep in stock based on the identified issues and service suggestions.
-  Ensure the response is well-formatted and easy to understand.
-  Vehicle Model: {{{vehicleModel}}}`,
-});
-
-const analyzeServiceDataFlow = ai.defineFlow(
-  {
-    name: 'analyzeServiceDataFlow',
-    inputSchema: AnalyzeServiceDataInputSchema,
-    outputSchema: AnalyzeServiceDataOutputSchema,
-  },
-  async input => {
-    const {output} = await analyzeServiceDataPrompt(input);
-    return output!;
+  if ((input.km ?? 0) > 80000) {
+    flags.push("Alto kilometraje");
+    suggestions.push("Revisar banda/cadena de distribución");
+    suggestions.push("Inspección de suspensión y bujes");
   }
-);
+  if (motivo.includes("aceite") || desc.includes("aceite")) {
+    suggestions.push("Revisar fugas, cárter y sello de cigüeñal");
+  }
+  if (motivo.includes("ruido") || desc.includes("ruido")) {
+    suggestions.push("Inspección de rodamientos, poleas y suspensión");
+  }
+  if (motivo.includes("freno") || desc.includes("freno")) {
+    suggestions.push("Medir pastas y discos; purga si aplica");
+  }
+
+  const summary =
+    input.descripcion?.trim() ||
+    `Motivo: ${input.motivo || "No especificado"} · KM: ${input.km ?? "—"}`;
+
+  return { summary, flags, suggestions };
+}

@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useMemo } from "react";
 import { type FormData, type ServiceItem } from "@/lib/definitions";
-import { getAiEstimate } from "@/lib/actions";
+import { generateEstimate } from "@/ai/flows/generate-estimate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CardTitle, CardDescription, CardHeader } from "@/components/ui/card";
@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import type { EstimateOutput } from "@/ai/flows/generate-estimate";
+import type { Estimate } from "@/ai/flows/generate-estimate";
 
 type Step3Props = {
   onNext: () => void;
@@ -53,7 +53,7 @@ export default function Step3Estimate({
   const [newItem, setNewItem] = useState({ name: "", quantity: 1, price: 0, labor: 0 });
   const [discount, setDiscount] = useState(data.discount || 0);
   const [isPending, startTransition] = useTransition();
-  const [aiEstimate, setAiEstimate] = useState<EstimateOutput | null>(null);
+  const [aiEstimate, setAiEstimate] = useState<Estimate | null>(null);
   const { toast } = useToast();
 
   const handleAddItem = () => {
@@ -80,50 +80,22 @@ export default function Step3Estimate({
   }
 
   const handleGenerateEstimate = () => {
-    if (!data.make || !data.model) {
-      toast({
-        variant: "destructive",
-        title: "Faltan datos del vehículo",
-        description: "Por favor, complete los detalles del vehículo en el paso 1.",
+    startTransition(() => {
+      const totalLabor = services.reduce((acc, s) => acc + (s.labor * s.quantity), 0);
+      const totalParts = services.reduce((acc, s) => acc + (s.price * s.quantity), 0);
+      
+      const result = generateEstimate({
+          manoObraHrs: totalLabor,
+          tarifaHora: 150, // Example hourly rate
+          refacciones: totalParts,
+          insumos: 50, // Example supplies cost
+          descuentoPct: discount,
       });
-      return;
-    }
-    startTransition(async () => {
-      const result = await getAiEstimate(data, services);
-      if (result.success) {
-        setAiEstimate(result.data);
-        if (result.data.partsCost) {
-            const newServices = [...services];
-            const partsService = newServices.find(s => s.name === 'Partes Adicionales (IA)');
-            if (partsService) {
-                partsService.price = result.data.partsCost;
-            } else {
-                newServices.push({ name: 'Partes Adicionales (IA)', price: result.data.partsCost, quantity: 1, labor: 0, id: crypto.randomUUID() });
-            }
-            setServices(newServices);
-        }
-        if (result.data.laborCost) {
-            const newServices = [...services];
-            const laborService = newServices.find(s => s.name === 'Mano de Obra (IA)');
-            if (laborService) {
-                laborService.price = result.data.laborCost;
-            } else {
-                newServices.push({ name: 'Mano de Obra (IA)', price: result.data.laborCost, quantity: 1, labor: 0, id: crypto.randomUUID() });
-            }
-            setServices(newServices);
-        }
-
-        toast({
-          title: "Estimado Generado",
-          description: "El estimado con IA ha sido generado y añadido a la lista.",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error,
-        });
-      }
+      setAiEstimate(result);
+      toast({
+        title: "Estimado Generado",
+        description: "Se ha calculado una sugerencia de presupuesto.",
+      });
     });
   };
 
@@ -142,7 +114,15 @@ export default function Step3Estimate({
   }, [services, discount]);
 
   const handleNext = () => {
-    updateData({ services, discount, ...totals });
+    const dataToUpdate = { 
+        services, 
+        discount, 
+        subtotal: totals.subtotal,
+        discountAmount: totals.discountAmount,
+        ivaAmount: totals.ivaAmount,
+        total: totals.total,
+    };
+    updateData(dataToUpdate);
     onNext();
   };
 
@@ -279,23 +259,23 @@ export default function Step3Estimate({
             ) : (
               <Sparkles className="mr-2 h-4 w-4" />
             )}
-            Generar Sugerencia con IA
+            Generar Sugerencia de Presupuesto
           </Button>
         </div>
 
         {aiEstimate && (
           <Alert>
             <Sparkles className="h-4 w-4" />
-            <AlertTitle className="font-headline">Sugerencia de Presupuesto (IA)</AlertTitle>
+            <AlertTitle className="font-headline">Sugerencia de Presupuesto</AlertTitle>
             <AlertDescription className="space-y-2">
-              <p>La IA ha analizado la información y sugiere los siguientes costos:</p>
+              <p>Se ha calculado un desglose sugerido:</p>
               <ul className="list-disc pl-5 text-sm">
-                <li>Costo de Partes: ${aiEstimate.partsCost.toFixed(2)}</li>
-                <li>Costo de Mano de Obra: ${aiEstimate.laborCost.toFixed(2)}</li>
-                <li>Costo de Suministros: ${aiEstimate.suppliesCost.toFixed(2)}</li>
+                <li>Subtotal: ${aiEstimate.subtotal.toFixed(2)}</li>
+                <li>Descuento: ${aiEstimate.descuento.toFixed(2)}</li>
+                <li>IVA: ${aiEstimate.iva.toFixed(2)}</li>
               </ul>
               <p className="text-lg font-bold text-foreground">
-                Costo Total Estimado (IA): ${aiEstimate.totalCost.toFixed(2)}
+                Costo Total Estimado: ${aiEstimate.total.toFixed(2)}
               </p>
             </AlertDescription>
           </Alert>
@@ -311,3 +291,5 @@ export default function Step3Estimate({
     </>
   );
 }
+
+    

@@ -1,56 +1,28 @@
-// src/ai/flows/generate-checklist.ts
-'use server';
+"use client";
 
-/**
- * @fileOverview Generates a checklist of vehicle inspection points based on vehicle information.
- *
- * - generateChecklist - A function that generates the checklist.
- * - GenerateChecklistInput - The input type for the generateChecklist function.
- * - GenerateChecklistOutput - The return type for the generateChecklist function.
- */
+export type ChecklistItem = { name: string; status: "Bueno" | "Por revisar" | "Mal" };
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+export function generateChecklist(input: { motivo?: string }): ChecklistItem[] {
+  const base: ChecklistItem[] = [
+    { name: "Llantas", status: "Por revisar" },
+    { name: "Frenos", status: "Por revisar" },
+    { name: "Luces", status: "Por revisar" },
+    { name: "Líquidos", status: "Por revisar" },
+    { name: "Batería", status: "Por revisar" },
+  ];
 
-const GenerateChecklistInputSchema = z.object({
-  make: z.string().describe('The make of the vehicle.'),
-  model: z.string().describe('The model of the vehicle.'),
-  year: z.string().describe('The year of the vehicle.'),
-});
-export type GenerateChecklistInput = z.infer<typeof GenerateChecklistInputSchema>;
-
-const GenerateChecklistOutputSchema = z.object({
-  checklist: z.string().describe('A checklist of inspection points for the vehicle.'),
-});
-export type GenerateChecklistOutput = z.infer<typeof GenerateChecklistOutputSchema>;
-
-export async function generateChecklist(input: GenerateChecklistInput): Promise<GenerateChecklistOutput> {
-  return generateChecklistFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'generateChecklistPrompt',
-  input: {schema: GenerateChecklistInputSchema},
-  output: {schema: GenerateChecklistOutputSchema},
-  prompt: `You are an expert automotive service advisor.
-
-  Based on the following vehicle information, generate a checklist of inspection points that a service advisor should review during vehicle reception. The checklist should be comprehensive but concise, covering all major areas of the vehicle. Focus on items relevant to routine maintenance and safety inspections.
-
-  Make: {{{make}}}
-  Model: {{{model}}}
-  Year: {{{year}}}
-
-  Checklist:`,
-});
-
-const generateChecklistFlow = ai.defineFlow(
-  {
-    name: 'generateChecklistFlow',
-    inputSchema: GenerateChecklistInputSchema,
-    outputSchema: GenerateChecklistOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  const motivo = (input.motivo || "").toLowerCase();
+  if (motivo.includes("aceite")) {
+    base.push({ name: "Filtro de aceite", status: "Por revisar" });
+    base.push({ name: "Fugas motor", status: "Por revisar" });
   }
-);
+  if (motivo.includes("freno")) {
+    base.push({ name: "Espesor de pastas y discos", status: "Por revisar" });
+  }
+  if (motivo.includes("afinación")) {
+    base.push({ name: "Bujías", status: "Por revisar" });
+    base.push({ name: "Filtro de aire", status: "Por revisar" });
+  }
+
+  return base;
+}
