@@ -9,13 +9,6 @@ import Step3Estimate from "./step-3-estimate";
 import Step4Summary from "./step-4-summary";
 import { CardContent } from "@/components/ui/card";
 
-const steps = [
-  { id: 1, name: "Datos del Vehículo" },
-  { id: 2, name: "Checklist de Recepción" },
-  { id: 3, name: "Presupuesto" },
-  { id: 4, name: "Revisar y Firmar" },
-];
-
 const getInitialFormData = (): Partial<FormData> => ({
   checklist: {
     tires: "N/A",
@@ -33,6 +26,7 @@ export function MainForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<FormData>>(getInitialFormData());
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     // Generate folio and orderDate on the client-side to avoid hydration mismatch
@@ -42,7 +36,8 @@ export function MainForm() {
         orderDate: new Date().toLocaleDateString("es-MX", {
             year: 'numeric', month: 'long', day: 'numeric'
         }),
-    }))
+    }));
+    setIsClient(true);
   }, []);
 
   const updateFormData = (data: Partial<FormData>) => {
@@ -81,6 +76,10 @@ export function MainForm() {
     setIsCompleted(false);
   }
 
+  if (!isClient) {
+    // Render nothing or a loading spinner on the server or before hydration
+    return null;
+  }
 
   return (
     <>
