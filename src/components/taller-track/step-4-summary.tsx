@@ -176,14 +176,14 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                     Orden de Servicio
                   </CardTitle>
                   <CardDescription>
-                    Revisa todos los detalles.
+                    Folio: {data.folio}
                   </CardDescription>
                 </td>
               </tr>
             </tbody>
           </table>
            <div className="flex justify-between items-baseline text-sm pt-4 border-t">
-              <p>Folio: <span className="font-semibold text-primary">{data.folio}</span></p>
+              <p>Revisa todos los detalles.</p>
               <p>Fecha: <span className="font-semibold">{data.orderDate}</span></p>
           </div>
         </CardHeader>
@@ -197,22 +197,22 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                     <tbody>
                         <tr>
                             <td className="py-1 pr-4 w-1/4"><strong>Cliente:</strong></td>
-                            <td className="py-1 pr-4 w-1/4">{data.customerName}</td>
+                            <td className="py-1 pr-4 w-3/4" colSpan={3}>{data.customerName}</td>
+                        </tr>
+                        <tr>
                             <td className="py-1 pr-4 w-1/4"><strong>Teléfono:</strong></td>
                             <td className="py-1 pr-4 w-1/4">{data.customerPhone}</td>
+                            <td className="py-1 pr-4 w-1/4"><strong>Email:</strong></td>
+                            <td className="py-1 pr-4 w-1/4">{data.customerEmail}</td>
                         </tr>
                         <tr>
-                            <td className="py-1 pr-4"><strong>Email:</strong></td>
-                            <td className="py-1 pr-4">{data.customerEmail}</td>
                             <td className="py-1 pr-4"><strong>Vehículo:</strong></td>
                             <td className="py-1 pr-4">{data.year} {data.make} {data.model}</td>
-                        </tr>
-                        <tr>
                             <td className="py-1 pr-4"><strong>VIN:</strong></td>
-                            <td className="py-1 pr-4" colSpan={3}>{data.vin}</td>
+                            <td className="py-1 pr-4">{data.vin}</td>
                         </tr>
-                        <tr>
-                            <td className="py-1 pr-4 pt-4 border-t" colSpan={4}><strong>Problemas Reportados:</strong> {data.knownIssues}</td>
+                        <tr className="border-t">
+                            <td className="py-1 pr-4 pt-2" colSpan={4}><strong>Problemas Reportados:</strong> {data.knownIssues}</td>
                         </tr>
                         <tr>
                             <td className="py-1 pr-4" colSpan={4}><strong>Servicios Solicitados:</strong> {data.requestedServices}</td>
@@ -240,8 +240,8 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                            <td></td>
                         </tr>
                         {data.checklist?.notes && (
-                        <tr>
-                            <td colSpan={3} className="pt-2 mt-2 border-t">
+                        <tr className="border-t">
+                            <td colSpan={3} className="pt-2 mt-2">
                                 <strong>Observaciones:</strong> {data.checklist.notes}
                             </td>
                         </tr>
@@ -301,30 +301,30 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
         </div>
       </div>
 
-      <div className="flex justify-between mt-8 no-print">
-        <Button type="button" variant="outline" onClick={onPrev} size="lg" disabled={isSaving || isSaved}>
-          Anterior
-        </Button>
-        <div className="flex gap-2">
-           <Button onClick={handleShare} variant="outline" size="lg" disabled={!data.customerPhone}>
-            <MessageSquare className="mr-2 h-4 w-4" /> Compartir
-          </Button>
-          <Button onClick={handleGeneratePdf} variant="outline" size="lg">
-            <Download className="mr-2 h-4 w-4" /> Generar PDF
-          </Button>
-          <Button onClick={handleSave} size="lg" disabled={isSaving || isSaved}>
-            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isSaved ? <CheckCircle className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
-            {isSaved ? "Guardado" : "Guardar Orden"}
-          </Button>
+      <CardContent className="no-print">
+        <div className="flex justify-between mt-8">
+            <Button type="button" variant="outline" onClick={onPrev} size="lg" disabled={isSaving || isSaved}>
+            Anterior
+            </Button>
+            <div className="flex gap-2">
+            <Button onClick={handleShare} variant="outline" size="lg" disabled={!data.customerPhone}>
+                <MessageSquare className="mr-2 h-4 w-4" /> Compartir
+            </Button>
+            <Button onClick={handleGeneratePdf} variant="outline" size="lg">
+                <Download className="mr-2 h-4 w-4" /> Generar PDF
+            </Button>
+            <Button onClick={handleSave} size="lg" disabled={isSaving || isSaved}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isSaved ? <CheckCircle className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
+                {isSaved ? "Guardado" : "Guardar Orden"}
+            </Button>
+            </div>
         </div>
-      </div>
-      <div className="mt-4 text-center no-print">
-         <Button onClick={onRestart} variant="link" size="lg">
-            <RefreshCw className="mr-2 h-4 w-4" /> Iniciar Nueva Orden
-          </Button>
-      </div>
+        <div className="mt-4 text-center">
+            <Button onClick={onRestart} variant="link" size="lg">
+                <RefreshCw className="mr-2 h-4 w-4" /> Iniciar Nueva Orden
+            </Button>
+        </div>
+      </CardContent>
     </>
   );
 }
-
-    
