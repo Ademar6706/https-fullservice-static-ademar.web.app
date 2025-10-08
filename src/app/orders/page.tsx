@@ -96,7 +96,7 @@ export default function OrdersPage() {
   };
 
   const handleViewOrder = (orderId: string) => {
-    router.push(`/orders/${orderId}`);
+    router.push(`/orders/view?id=${orderId}`);
   };
 
   return (

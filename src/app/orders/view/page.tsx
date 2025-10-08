@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import type jsPDF from 'jspdf';
@@ -14,18 +14,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, ArrowLeft, Download, MessageSquare } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function OrderDetailPage() {
+export default function OrderViewPage() {
   const [order, setOrder] = useState<Partial<FormData> | null>(null);
   const [loading, setLoading] = useState(true);
-  const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const printAreaRef = useRef<HTMLDivElement>(null);
-  const { id } = params;
+  const id = searchParams.get('id');
   const db = useFirestore();
 
   useEffect(() => {
-    if (typeof id !== 'string' || !db) {
+    if (!id || !db) {
       setLoading(false);
       return;
     }
