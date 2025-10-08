@@ -1,5 +1,4 @@
-
-export type ChecklistItem = { name: string; status: "Bueno" | "Por revisar" | "Mal" };
+import type { ChecklistItem } from "@/lib/definitions";
 
 export function generateChecklist(input: { motivo?: string }): ChecklistItem[] {
   const base: ChecklistItem[] = [

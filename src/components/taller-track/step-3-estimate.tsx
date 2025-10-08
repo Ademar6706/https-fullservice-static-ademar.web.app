@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
-import { type FormData, type ServiceItem } from "@/lib/definitions";
+import { type FormData, type ServiceItem, type Estimate } from "@/lib/definitions";
 import { generateEstimate } from "@/ai/flows/generate-estimate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import type { Estimate } from "@/ai/flows/generate-estimate";
 
 type Step3Props = {
   onNext: () => void;
@@ -291,5 +290,3 @@ export default function Step3Estimate({
     </>
   );
 }
-
-    

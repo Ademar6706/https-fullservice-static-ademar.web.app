@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Tipos para el formulario
 export const VehicleSchema = z.object({
   customerName: z.string().min(2, "Nombre es requerido"),
   customerPhone: z.string().min(10, "Número de teléfono válido es requerido"),
@@ -40,11 +41,6 @@ export type ServiceItem = {
   labor: number;
 };
 
-export type EstimateData = {
-  services: ServiceItem[];
-  discount: number;
-};
-
 export type FormData = VehicleFormData & {
   checklist: Partial<ChecklistFormData>;
   services: ServiceItem[];
@@ -56,4 +52,42 @@ export type FormData = VehicleFormData & {
   discountAmount?: number;
   ivaAmount?: number;
   total?: number;
+};
+
+
+// Tipos para los flujos de IA
+
+// analyze-service-data
+export type AnalyzeInput = {
+  descripcion?: string;
+  km?: number;
+  anio?: number;
+  motivo?: string;
+};
+
+export type AnalyzeResult = {
+  summary: string;
+  flags: string[];
+  suggestions: string[];
+};
+
+
+// generate-checklist
+export type ChecklistItem = { name: string; status: "Bueno" | "Por revisar" | "Mal" };
+
+
+// generate-estimate
+export type EstimateInput = {
+  manoObraHrs?: number;
+  tarifaHora?: number;
+  refacciones?: number;
+  insumos?: number;
+  descuentoPct?: number;
+};
+
+export type Estimate = {
+  subtotal: number;
+  descuento: number;
+  iva: number;
+  total: number;
 };

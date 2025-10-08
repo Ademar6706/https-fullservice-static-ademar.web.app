@@ -1,16 +1,4 @@
-
-export type AnalyzeInput = {
-  descripcion?: string;
-  km?: number;
-  anio?: number;
-  motivo?: string;
-};
-
-export type AnalyzeResult = {
-  summary: string;
-  flags: string[];
-  suggestions: string[];
-};
+import type { AnalyzeInput, AnalyzeResult } from "@/lib/definitions";
 
 export function analyzeServiceData(input: AnalyzeInput): AnalyzeResult {
   const desc = (input.descripcion || "").toLowerCase();

@@ -1,18 +1,4 @@
-
-export type EstimateInput = {
-  manoObraHrs?: number;
-  tarifaHora?: number;
-  refacciones?: number;
-  insumos?: number;
-  descuentoPct?: number;
-};
-
-export type Estimate = {
-  subtotal: number;
-  descuento: number;
-  iva: number;
-  total: number;
-};
+import type { Estimate, EstimateInput } from "@/lib/definitions";
 
 export function generateEstimate(input: EstimateInput): Estimate {
   const hrs = Number(input.manoObraHrs || 0);
