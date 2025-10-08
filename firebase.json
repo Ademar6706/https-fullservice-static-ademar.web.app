@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "static",
-      "site": "fullservice-static-Full",
+      "site": "fullservice-static-ademar",
       "public": "out",
       "ignore": [
         "firebase.json",
