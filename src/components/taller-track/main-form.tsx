@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormData } from "@/lib/definitions";
 import { Stepper } from "./stepper";
 import Step1VehicleForm from "./step-1-vehicle-form";
@@ -26,10 +26,6 @@ const getInitialFormData = (): Partial<FormData> => ({
   },
   services: [],
   discount: 0,
-  folio: `FS-${Date.now().toString().slice(-6)}`,
-  orderDate: new Date().toLocaleDateString("es-MX", {
-    year: 'numeric', month: 'long', day: 'numeric'
-  }),
   signature: "",
 });
 
@@ -37,6 +33,17 @@ export function MainForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<FormData>>(getInitialFormData());
   const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    // Generate folio and orderDate on the client-side to avoid hydration mismatch
+    setFormData(prev => ({
+        ...prev,
+        folio: `FS-${Date.now().toString().slice(-6)}`,
+        orderDate: new Date().toLocaleDateString("es-MX", {
+            year: 'numeric', month: 'long', day: 'numeric'
+        }),
+    }))
+  }, []);
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -64,7 +71,13 @@ export function MainForm() {
 
   const handleRestart = () => {
     setCurrentStep(1);
-    setFormData(getInitialFormData());
+    setFormData({
+        ...getInitialFormData(),
+        folio: `FS-${Date.now().toString().slice(-6)}`,
+        orderDate: new Date().toLocaleDateString("es-MX", {
+            year: 'numeric', month: 'long', day: 'numeric'
+        }),
+    });
     setIsCompleted(false);
   }
 
