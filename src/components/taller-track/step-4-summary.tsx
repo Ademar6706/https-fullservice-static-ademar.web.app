@@ -212,6 +212,12 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                             <td className="py-1 pr-4"><strong>VIN:</strong></td>
                             <td className="py-1 pr-4" colSpan={3}>{data.vin}</td>
                         </tr>
+                        <tr>
+                            <td className="py-1 pr-4 pt-4 border-t" colSpan={4}><strong>Problemas Reportados:</strong> {data.knownIssues}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-1 pr-4" colSpan={4}><strong>Servicios Solicitados:</strong> {data.requestedServices}</td>
+                        </tr>
                     </tbody>
                 </table>
             </CardContent>
@@ -319,3 +325,5 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     </>
   );
 }
+
+    
