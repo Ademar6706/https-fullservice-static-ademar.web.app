@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CardTitle, CardDescription, CardHeader } from "@/components/ui/card";
 import { User, Car, Wrench } from "lucide-react";
+import { useEffect } from "react";
 
 type Step1Props = {
   onNext: () => void;
@@ -35,6 +36,20 @@ export default function Step1VehicleForm({
   const form = useForm<VehicleFormData>({
     resolver: zodResolver(VehicleSchema),
     defaultValues: {
+      customerName: "",
+      customerPhone: "",
+      customerEmail: "",
+      vin: "",
+      make: "",
+      model: "",
+      year: new Date().getFullYear(),
+      requestedServices: "",
+      knownIssues: "",
+    },
+  });
+
+  useEffect(() => {
+    form.reset({
       customerName: data.customerName || "",
       customerPhone: data.customerPhone || "",
       customerEmail: data.customerEmail || "",
@@ -44,8 +59,9 @@ export default function Step1VehicleForm({
       year: data.year || new Date().getFullYear(),
       requestedServices: data.requestedServices || "",
       knownIssues: data.knownIssues || "",
-    },
-  });
+    });
+  }, [data, form]);
+
 
   function onSubmit(values: VehicleFormData) {
     updateData(values);
