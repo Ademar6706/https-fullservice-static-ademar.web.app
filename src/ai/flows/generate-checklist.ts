@@ -1,4 +1,3 @@
-"use client";
 
 export type ChecklistItem = { name: string; status: "Bueno" | "Por revisar" | "Mal" };
 

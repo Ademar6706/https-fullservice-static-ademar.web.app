@@ -1,4 +1,3 @@
-"use client";
 
 export type AnalyzeInput = {
   descripcion?: string;
