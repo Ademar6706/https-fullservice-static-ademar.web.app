@@ -8,6 +8,14 @@ import Step2Checklist from "./step-2-checklist";
 import Step3Estimate from "./step-3-estimate";
 import Step4Summary from "./step-4-summary";
 import { CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+
+const steps = [
+  { id: 1, name: "Datos" },
+  { id: 2, name: "Checklist" },
+  { id: 3, name: "Presupuesto" },
+  { id: 4, name: "Resumen" },
+];
 
 const getInitialFormData = (): Partial<FormData> => ({
   checklist: {
@@ -26,7 +34,7 @@ export function MainForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<FormData>>(getInitialFormData());
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     // Generate folio and orderDate on the client-side to avoid hydration mismatch
@@ -37,7 +45,7 @@ export function MainForm() {
             year: 'numeric', month: 'long', day: 'numeric'
         }),
     }));
-    setIsClient(true);
+    setIsInitializing(false);
   }, []);
 
   const updateFormData = (data: Partial<FormData>) => {
@@ -65,20 +73,29 @@ export function MainForm() {
   }
 
   const handleRestart = () => {
+    setIsInitializing(true);
     setCurrentStep(1);
     setFormData({
         ...getInitialFormData(),
-        folio: `FS-${Date.now().toString().slice(-6)}`,
-        orderDate: new Date().toLocaleDateString("es-MX", {
-            year: 'numeric', month: 'long', day: 'numeric'
-        }),
     });
     setIsCompleted(false);
+     // Re-run initialization
+     setFormData(prev => ({
+      ...prev,
+      folio: `FS-${Date.now().toString().slice(-6)}`,
+      orderDate: new Date().toLocaleDateString("es-MX", {
+          year: 'numeric', month: 'long', day: 'numeric'
+      }),
+    }));
+    setIsInitializing(false);
   }
 
-  if (!isClient) {
-    // Render nothing or a loading spinner on the server or before hydration
-    return null;
+  if (isInitializing) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
