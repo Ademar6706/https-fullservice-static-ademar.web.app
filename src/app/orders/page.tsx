@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import type { FormData } from '@/lib/definitions';
@@ -16,10 +17,10 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Home, ListOrdered, ArrowUpDown, Loader2 } from 'lucide-react';
+import { Home, ListOrdered, ArrowUpDown, Loader2, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-type Order = Partial<FormData>;
+type Order = Partial<FormData> & { id: string };
 type SortKey = 'folio' | 'customerName' | 'orderDate' | 'total';
 
 export default function OrdersPage() {
@@ -27,6 +28,7 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' } | null>({ key: 'orderDate', direction: 'descending' });
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -57,7 +59,7 @@ export default function OrdersPage() {
     if (sortConfig !== null) {
       filteredOrders.sort((a, b) => {
         const aValue = a[sortConfig.key];
-        const bValue = b[sortconfig.key];
+        const bValue = b[sortConfig.key];
 
         if (aValue === undefined || aValue === null) return 1;
         if (bValue === undefined || bValue === null) return -1;
@@ -88,6 +90,10 @@ export default function OrdersPage() {
       return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />;
     }
     return sortConfig.direction === 'ascending' ? '▲' : '▼';
+  };
+
+  const handleViewOrder = (orderId: string) => {
+    router.push(`/orders/${orderId}`);
   };
 
   return (
@@ -145,12 +151,13 @@ export default function OrdersPage() {
                     <TableHead onClick={() => requestSort('total')} className="cursor-pointer text-right">
                       <div className="flex items-center justify-end">Total {getSortIndicator('total')}</div>
                     </TableHead>
+                    <TableHead className="text-right">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center">
+                      <TableCell colSpan={6} className="h-24 text-center">
                         <div className="flex justify-center items-center gap-2 text-muted-foreground">
                             <Loader2 className="h-5 w-5 animate-spin" />
                             <span>Cargando órdenes...</span>
@@ -159,7 +166,7 @@ export default function OrdersPage() {
                     </TableRow>
                   ) : sortedAndFilteredOrders.length > 0 ? (
                     sortedAndFilteredOrders.map((order) => (
-                      <TableRow key={order.folio}>
+                      <TableRow key={order.id} className="hover:bg-muted/50">
                         <TableCell>
                           <Badge variant="secondary">{order.folio}</Badge>
                         </TableCell>
@@ -167,11 +174,17 @@ export default function OrdersPage() {
                         <TableCell>{`${order.year} ${order.make} ${order.model}`}</TableCell>
                         <TableCell className="text-right">{order.orderDate}</TableCell>
                         <TableCell className="text-right font-semibold">${(order.total || 0).toFixed(2)}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" onClick={() => handleViewOrder(order.id)}>
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">Ver Orden</span>
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                         No se encontraron órdenes.
                       </TableCell>
                     </TableRow>
