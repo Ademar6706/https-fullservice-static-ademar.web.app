@@ -92,7 +92,7 @@ Este es el último paso para que tu aplicación esté en línea.
     npm run build
     ```
 
-4.  **Despliega en Firebase App Hosting:**
+4.  **Despliega en Firebase Hosting:**
     Este comando sube tu aplicación a internet.
     ```bash
     firebase deploy
