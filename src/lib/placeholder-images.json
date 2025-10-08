@@ -3,13 +3,13 @@
     {
       "id": "liqui-moly-logo",
       "description": "Liqui Moly Logo",
-      "imageUrl": "https://picsum.photos/seed/liquimoly/200/100",
+      "imageUrl": "https://picsum.photos/seed/liquimoly/200/250",
       "imageHint": "logo brand"
     },
     {
       "id": "full-service-logo",
       "description": "Full Service Logo",
-      "imageUrl": "https://picsum.photos/seed/fullservicelogo/200/200",
+      "imageUrl": "https://picsum.photos/seed/fullservice/200/100",
       "imageHint": "logo car service"
     }
   ]
