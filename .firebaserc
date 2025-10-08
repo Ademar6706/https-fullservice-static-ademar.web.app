@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "studio-6809108429-9ce62"
-  }
+  },
+  "targets": {
+    "studio-6809108429-9ce62": {
+      "hosting": {
+        "static": [
+          "fullservice-static-ademar"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
