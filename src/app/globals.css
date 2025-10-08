@@ -87,53 +87,63 @@ body {
   }
 }
 
+.generating-pdf body,
+.generating-pdf #print-area {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
 @media print {
-  body {
-    background-color: white;
+  body, #print-area {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
+
   .no-print {
-    display: none;
+    display: none !important;
   }
-  .print-container {
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-    border: none;
+  
+  .print-container-pdf {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
-  .print-card {
-    box-shadow: none;
-    border: 1px solid #ccc;
-    break-inside: avoid;
+  
+  #print-area .print-card {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    break-inside: avoid !important;
+    background-color: #ffffff !important;
   }
+
+  #print-area .card-header, #print-area .card-content {
+      background-color: #ffffff !important;
+  }
+
+  #print-area, #print-area * {
+    color: #000000 !important;
+  }
+
+  #print-area .text-primary {
+    color: #005096 !important;
+  }
+  
+  #print-area .text-destructive {
+     color: #ED1C24 !important;
+  }
+
   .print-signature {
-    max-height: 100px;
-    width: auto;
+    max-height: 100px !important;
+    width: auto !important;
+    background-color: transparent !important;
   }
+
   .print-footer {
     display: block !important;
   }
-}
-
-body.generating-pdf .no-print {
-  display: none;
-}
-body.generating-pdf .print-container-pdf {
-  padding: 0;
-  margin: 0;
-  box-shadow: none;
-  border: none;
-}
-body.generating-pdf .print-card {
-  box-shadow: none;
-  border: 1px solid #ccc;
-  break-inside: avoid;
-}
-body.generating-pdf .print-signature {
-  max-height: 100px;
-  width: auto;
-}
-body.generating-pdf .print-footer {
-  display: block !important;
 }
 
 .print-footer {

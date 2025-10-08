@@ -92,33 +92,48 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   const handleGeneratePdf = async () => {
     const input = printAreaRef.current;
     if (!input) return;
-
-    const { default: jsPDF } = await import('jspdf');
-    const { default: html2canvas } = await import('html2canvas');
-
-    // Temporarily add a class to style the content for PDF generation
+  
+    const { default: jsPDF } = await import("jspdf");
+    const { default: html2canvas } = await import("html2canvas");
+  
     document.body.classList.add("generating-pdf");
+  
     const canvas = await html2canvas(input, {
       scale: 2,
       useCORS: true,
-      onclone: (document) => {
-        // Find the logos and replace their src with a higher quality one if needed
-        const liquiMolyLogo = document.querySelector('[data-ai-hint="logo brand"][alt="Liqui Moly Logo"]') as HTMLImageElement;
-        const fullServiceLogo = document.querySelector('[data-ai-hint="logo brand"][alt="Full Service Logo"]') as HTMLImageElement;
-        if(liquiMolyLogo) liquiMolyLogo.style.filter = 'brightness(0.9)'; // Example adjustment for better print quality
-        if(fullServiceLogo) fullServiceLogo.style.filter = 'brightness(0.9)';
-      }
+      backgroundColor: '#ffffff'
     });
+  
     document.body.classList.remove("generating-pdf");
-
-    const imgData = canvas.toDataURL('image/png');
+  
+    const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'px',
-      format: [canvas.width, canvas.height]
+      orientation: "p",
+      unit: "px",
+      format: "a4",
     });
-    
-    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+  
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    const newCanvasWidth = pdfWidth;
+    const newCanvasHeight = newCanvasWidth / ratio;
+  
+    let heightLeft = newCanvasHeight;
+    let position = 0;
+  
+    pdf.addImage(imgData, "PNG", 0, position, newCanvasWidth, newCanvasHeight);
+    heightLeft -= pdfHeight;
+  
+    while (heightLeft > 0) {
+      position = heightLeft - newCanvasHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, newCanvasWidth, newCanvasHeight);
+      heightLeft -= pdfHeight;
+    }
+  
     pdf.save(`orden-servicio-${data.folio}.pdf`);
   };
 
@@ -146,17 +161,21 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     <>
       <div id="print-area" ref={printAreaRef} className="bg-white p-6 print-container-pdf">
         <CardHeader className="p-0 mb-6">
-          <div className="flex justify-between items-start">
-              <div>
+          <div className="flex justify-between items-start mb-4">
+              <div className="flex items-center gap-4">
+                <LiquiMolyLogo className="w-20 h-20" />
+                <FullServiceLogo className="w-28 h-14" />
+              </div>
+              <div className="text-right">
                   <CardTitle className="font-headline text-2xl">
-                  Resumen de la Orden de Servicio
+                  Orden de Servicio
                   </CardTitle>
                   <CardDescription>
-                  Revisa todos los detalles antes de finalizar la orden.
+                  Revisa todos los detalles.
                   </CardDescription>
               </div>
           </div>
-           <div className="flex justify-between items-baseline text-sm pt-4">
+           <div className="flex justify-between items-baseline text-sm pt-4 border-t">
               <p>Folio: <span className="font-semibold text-primary">{data.folio}</span></p>
               <p>Fecha: <span className="font-semibold">{data.orderDate}</span></p>
           </div>
