@@ -75,13 +75,11 @@ export function MainForm() {
   const handleRestart = () => {
     setIsInitializing(true);
     setCurrentStep(1);
-    setFormData({
-        ...getInitialFormData(),
-    });
+    setFormData(getInitialFormData());
     setIsCompleted(false);
      // Re-run initialization
      setFormData(prev => ({
-      ...prev,
+      ...getInitialFormData(),
       folio: `FS-${Date.now().toString().slice(-6)}`,
       orderDate: new Date().toLocaleDateString("es-MX", {
           year: 'numeric', month: 'long', day: 'numeric'
