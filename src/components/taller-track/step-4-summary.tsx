@@ -112,10 +112,11 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   };
 
   const totals = useMemo(() => {
-    const subtotal = data.services?.reduce(
+    const totalWithIva = data.services?.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     ) || 0;
+    const subtotal = totalWithIva / 1.16;
     const discountAmount = subtotal * ((data.discount || 0) / 100);
     const subtotalAfterDiscount = subtotal - discountAmount;
     const ivaAmount = subtotalAfterDiscount * 0.16;
@@ -125,7 +126,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
 
 
   const handleShare = () => {
-    const summaryText = `*Presupuesto de Servicio - Folio: ${data.folio}*\n\n*Cliente:* ${data.customerName}\n*Vehículo:* ${data.year} ${data.make} ${data.model}\n\n*Servicios:*\n${data.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`).join('\n')}\n\n*Subtotal:* $${totals.subtotal.toFixed(2)}\n*Descuento (${data.discount}%):* -$${totals.discountAmount.toFixed(2)}\n*IVA (16%):* $${totals.ivaAmount.toFixed(2)}\n*Total:* $${totals.total.toFixed(2)}`;
+    const summaryText = `*Presupuesto de Servicio - Folio: ${data.folio}*\n\n*Cliente:* ${data.customerName}\n*Vehículo:* ${data.year} ${data.make} ${data.model}\n\n*Servicios:*\n${data.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`).join('\n')}\n\n*Subtotal (sin IVA):* $${totals.subtotal.toFixed(2)}\n*Descuento (${data.discount}%):* -$${totals.discountAmount.toFixed(2)}\n*IVA (16%):* $${totals.ivaAmount.toFixed(2)}\n*Total:* $${totals.total.toFixed(2)}`;
     const whatsappUrl = `https://wa.me/${data.customerPhone}?text=${encodeURIComponent(summaryText)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -184,16 +185,16 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
             <CardContent>
               <ul className="space-y-1 text-sm list-disc list-inside">
                   {data.services?.map(item => (
-                      <li key={item.id}>{item.name} (x{item.quantity}) - ${(item.price * item.quantity).toFixed(2)}</li>
+                      <li key={item.id}>{item.name} (x{item.quantity}) - ${(item.price * item.quantity).toFixed(2)} (IVA incluido)</li>
                   ))}
               </ul>
                <Separator className="my-4" />
                <div className="space-y-2 text-sm max-w-sm ml-auto">
-                  <div className="flex justify-between"><span>Subtotal:</span> <span>${totals.subtotal.toFixed(2)}</span></div>
+                  <div className="flex justify-between"><span>Subtotal (sin IVA):</span> <span>${totals.subtotal.toFixed(2)}</span></div>
                   {data.discount && data.discount > 0 && <div className="flex justify-between"><span>Descuento ({data.discount}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>}
                   <div className="flex justify-between"><span>IVA (16%):</span> <span>${totals.ivaAmount.toFixed(2)}</span></div>
                   <Separator/>
-                  <div className="flex justify-between font-bold text-base"><span>Total Estimado:</span> <span>${totals.total.toFixed(2)}</span></div>
+                  <div className="flex justify-between font-bold text-base"><span>Total:</span> <span>${totals.total.toFixed(2)}</span></div>
                </div>
             </CardContent>
           </Card>

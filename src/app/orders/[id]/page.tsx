@@ -50,7 +50,8 @@ export default function OrderDetailPage() {
 
   const totals = useMemo(() => {
     if (!order?.services) return { subtotal: 0, discountAmount: 0, ivaAmount: 0, total: 0 };
-    const subtotal = order.services.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalWithIva = order.services.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const subtotal = totalWithIva / 1.16;
     const discountAmount = subtotal * ((order.discount || 0) / 100);
     const subtotalAfterDiscount = subtotal - discountAmount;
     const ivaAmount = subtotalAfterDiscount * 0.16;
@@ -74,7 +75,7 @@ export default function OrderDetailPage() {
 
   const handleShare = () => {
     if (!order) return;
-    const summaryText = `*Resumen de Servicio - Folio: ${order.folio}*\n\n*Cliente:* ${order.customerName}\n*Vehículo:* ${order.year} ${order.make} ${order.model}\n\n*Servicios:*\n${order.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`).join('\n')}\n\n*Subtotal:* $${totals.subtotal.toFixed(2)}\n*Descuento (${order.discount}%):* -$${totals.discountAmount.toFixed(2)}\n*IVA (16%):* $${totals.ivaAmount.toFixed(2)}\n*Total:* $${totals.total.toFixed(2)}`;
+    const summaryText = `*Resumen de Servicio - Folio: ${order.folio}*\n\n*Cliente:* ${order.customerName}\n*Vehículo:* ${order.year} ${order.make} ${order.model}\n\n*Servicios:*\n${order.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`).join('\n')}\n\n*Subtotal (sin IVA):* $${totals.subtotal.toFixed(2)}\n*Descuento (${order.discount}%):* -$${totals.discountAmount.toFixed(2)}\n*IVA (16%):* $${totals.ivaAmount.toFixed(2)}\n*Total:* $${totals.total.toFixed(2)}`;
     const whatsappUrl = `https://wa.me/${order.customerPhone}?text=${encodeURIComponent(summaryText)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -169,12 +170,12 @@ export default function OrderDetailPage() {
                 <CardContent>
                   <ul className="space-y-1 text-sm list-disc list-inside">
                       {order.services?.map(item => (
-                          <li key={item.id}>{item.name} (x{item.quantity}) - ${(item.price * item.quantity).toFixed(2)}</li>
+                          <li key={item.id}>{item.name} (x{item.quantity}) - ${(item.price * item.quantity).toFixed(2)} (IVA incluido)</li>
                       ))}
                   </ul>
                   <Separator className="my-4" />
                   <div className="space-y-2 text-sm max-w-sm ml-auto">
-                      <div className="flex justify-between"><span>Subtotal:</span> <span>${totals.subtotal.toFixed(2)}</span></div>
+                      <div className="flex justify-between"><span>Subtotal (sin IVA):</span> <span>${totals.subtotal.toFixed(2)}</span></div>
                       {order.discount && order.discount > 0 && <div className="flex justify-between"><span>Descuento ({order.discount}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>}
                       <div className="flex justify-between"><span>IVA (16%):</span> <span>${totals.ivaAmount.toFixed(2)}</span></div>
                       <Separator/>

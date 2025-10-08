@@ -128,14 +128,16 @@ export default function Step3Estimate({
   };
 
   const totals = useMemo(() => {
-    const subtotal = services.reduce(
+    const totalWithIva = services.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     );
+    const subtotal = totalWithIva / 1.16;
     const discountAmount = subtotal * (discount / 100);
     const subtotalAfterDiscount = subtotal - discountAmount;
     const ivaAmount = subtotalAfterDiscount * 0.16;
     const total = subtotalAfterDiscount + ivaAmount;
+
     return { subtotal, discountAmount, ivaAmount, total };
   }, [services, discount]);
 
@@ -151,7 +153,7 @@ export default function Step3Estimate({
           Calculadora de Presupuesto
         </CardTitle>
         <CardDescription>
-          Añade partes y servicios para calcular el presupuesto. Usa el generador IA para un desglose detallado.
+          Añade partes y servicios para calcular el presupuesto. El precio debe incluir IVA. Usa el generador IA para un desglose detallado.
         </CardDescription>
       </CardHeader>
       <div className="space-y-6">
@@ -171,7 +173,7 @@ export default function Step3Estimate({
                 </datalist>
             </div>
              <div>
-              <Label className="text-sm font-medium">Precio</Label>
+              <Label className="text-sm font-medium">Precio (con IVA)</Label>
               <Input
                 type="number"
                 placeholder="0.00"
@@ -199,9 +201,9 @@ export default function Step3Estimate({
           <TableHeader>
             <TableRow>
               <TableHead>Item</TableHead>
-              <TableHead className="text-right">Precio</TableHead>
+              <TableHead className="text-right">Precio (con IVA)</TableHead>
               <TableHead className="text-right">Cantidad</TableHead>
-              <TableHead className="text-right">Subtotal</TableHead>
+              <TableHead className="text-right">Subtotal (con IVA)</TableHead>
               <TableHead className="w-[80px] text-center">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -237,7 +239,7 @@ export default function Step3Estimate({
         <div className="flex justify-end">
             <div className="w-full max-w-sm space-y-2">
                 <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Subtotal:</span>
+                    <span className="text-muted-foreground">Subtotal (sin IVA):</span>
                     <span className="font-medium">${totals.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center gap-4">
