@@ -12,12 +12,14 @@ const firebaseConfig = {
 };
 
 function initializeFirebase() {
+  if (typeof window === 'undefined') {
+    return { app: null, firestore: null, auth: null };
+  }
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   const firestore = getFirestore(app);
   const auth = getAuth(app);
   return { app, firestore, auth };
 }
-const { app, firestore, auth } = initializeFirebase();
-export { app, firestore, auth, initializeFirebase };
 
+export { initializeFirebase };
 export * from './provider';
