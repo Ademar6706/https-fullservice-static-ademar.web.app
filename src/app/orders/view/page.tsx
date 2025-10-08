@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFirestore } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { getOrder } from "@/lib/actions";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
@@ -27,11 +27,11 @@ export default function OrderViewPage() {
       }
 
       try {
-        const snap = await getDoc(doc(db, "serviceOrders", id));
-        if (!snap.exists()) {
+        const orderData = await getOrder(db, id);
+        if (!orderData) {
           setErr("No existe la orden con ese ID.");
         } else {
-          setOrder(snap.data());
+          setOrder(orderData);
         }
       } catch (e: any) {
         console.error("Error fetching order:", e);

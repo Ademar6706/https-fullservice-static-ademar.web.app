@@ -27,7 +27,8 @@ import { useToast } from "@/hooks/use-toast";
 import { LiquiMolyLogo, FullServiceLogo } from "@/components/icons";
 import { SignaturePad } from "./signature-pad";
 import { useFirestore } from "@/lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { saveOrder } from "@/lib/actions";
+
 
 type Step4Props = {
   onPrev: () => void;
@@ -71,7 +72,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
 
     setIsSaving(true);
     try {
-      await addDoc(collection(db, "serviceOrders"), data);
+      await saveOrder(db, data);
       toast({
         title: "Orden Guardada",
         description: `La orden de servicio #${data.folio} ha sido guardada.`,

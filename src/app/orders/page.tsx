@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFirestore } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { listOrders } from '@/lib/actions';
 import type { FormData } from '@/lib/definitions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -37,11 +37,8 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const ordersCollection = collection(db, 'serviceOrders');
-        const q = query(ordersCollection, orderBy('orderDate', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
-        setOrders(ordersData);
+        const ordersData = await listOrders(db);
+        setOrders(ordersData as Order[]);
       } catch (error) {
         console.error("Error fetching orders: ", error);
       } finally {
