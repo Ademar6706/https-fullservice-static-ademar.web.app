@@ -43,7 +43,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   const printAreaRef = React.useRef<HTMLDivElement>(null);
   const db = useFirestore();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!db) {
       toast({
         variant: "destructive",
@@ -62,25 +62,23 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     }
 
     setIsSaving(true);
-    
-    addDoc(collection(db, "serviceOrders"), data)
-      .then(() => {
-        toast({
-          title: "Orden Guardada",
-          description: `La orden de servicio #${data.folio} ha sido guardada.`,
-        });
-        setIsSaved(true);
-      })
-      .catch((e) => {
-        console.error("Error adding document: ", e);
-        toast({
-          variant: "destructive",
-          title: "Error de Sincronización",
-          description: "No se pudo guardar la orden en la nube. Revisa tu conexión.",
-        });
-      }).finally(() => {
-        setIsSaving(false);
+    try {
+      await addDoc(collection(db, "serviceOrders"), data);
+      toast({
+        title: "Orden Guardada",
+        description: `La orden de servicio #${data.folio} ha sido guardada.`,
       });
+      setIsSaved(true);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      toast({
+        variant: "destructive",
+        title: "Error de Sincronización",
+        description: "No se pudo guardar la orden en la nube. Revisa tu conexión.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleGeneratePdf = async () => {
