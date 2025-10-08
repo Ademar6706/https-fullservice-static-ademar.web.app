@@ -9,8 +9,8 @@
     {
       "id": "full-service-logo",
       "description": "Full Service Logo",
-      "imageUrl": "https://picsum.photos/seed/fullservice/200/100",
-      "imageHint": "logo brand"
+      "imageUrl": "https://picsum.photos/seed/fullservicelogo/200/200",
+      "imageHint": "logo car service"
     }
   ]
 }
