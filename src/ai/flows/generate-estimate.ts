@@ -1,0 +1,73 @@
+'use server';
+
+/**
+ * @fileOverview A quick quote generation AI agent.
+ *
+ * - generateEstimate - A function that generates a quick quote based on vehicle and service information.
+ * - EstimateInput - The input type for the generateEstimate function.
+ * - EstimateOutput - The return type for the generateEstimate function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const EstimateInputSchema = z.object({
+  vehicleMake: z.string().describe('The make of the vehicle.'),
+  vehicleModel: z.string().describe('The model of the vehicle.'),
+  vehicleYear: z.string().describe('The year of the vehicle.'),
+  serviceSelected: z.string().describe('The service selected by the customer.'),
+  checklistObservations: z.string().describe('Observations from the vehicle checklist.'),
+});
+export type EstimateInput = z.infer<typeof EstimateInputSchema>;
+
+const EstimateOutputSchema = z.object({
+  laborCost: z.number().describe('The estimated cost of labor for the service.'),
+  partsCost: z.number().describe('The estimated cost of parts for the service.'),
+  suppliesCost: z.number().describe('The estimated cost of supplies for the service.'),
+  discount: z.number().describe('The discount applied to the quote.'),
+  iva: z.number().describe('The IVA (Value Added Tax) applied to the quote.'),
+  totalCost: z.number().describe('The total cost of the service, including labor, parts, supplies, discount, and IVA.'),
+});
+export type EstimateOutput = z.infer<typeof EstimateOutputSchema>;
+
+export async function generateEstimate(input: EstimateInput): Promise<EstimateOutput> {
+  return generateEstimateFlow(input);
+}
+
+const prompt = ai.definePrompt({
+  name: 'generateEstimatePrompt',
+  input: {schema: EstimateInputSchema},
+  output: {schema: EstimateOutputSchema},
+  prompt: `You are an expert service advisor providing quick quotes for automotive services.
+
+  Based on the following information, generate a quick quote:
+  Vehicle Make: {{{vehicleMake}}}
+  Vehicle Model: {{{vehicleModel}}}
+  Vehicle Year: {{{vehicleYear}}}
+  Service Selected: {{{serviceSelected}}}
+  Checklist Observations: {{{checklistObservations}}}
+
+  Provide a quote with estimated costs for labor, parts, and supplies, as well as any applicable discounts and IVA.
+
+  Ensure the total cost is accurately calculated.
+
+  Return the quote in JSON format.
+  Remember that the descriptions for each field will be used to create a well formatted JSON.
+  Do not generate any text outside of the JSON.
+
+  Consider that the prices should be in Mexican pesos.
+  Also, the IVA (Value Added Tax) in Mexico is 16%.
+`,
+});
+
+const generateEstimateFlow = ai.defineFlow(
+  {
+    name: 'generateEstimateFlow',
+    inputSchema: EstimateInputSchema,
+    outputSchema: EstimateOutputSchema,
+  },
+  async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
