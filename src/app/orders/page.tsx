@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
+import { useFirestore } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import type { FormData } from '@/lib/definitions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -29,8 +29,11 @@ export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' } | null>({ key: 'orderDate', direction: 'descending' });
   const router = useRouter();
+  const db = useFirestore();
 
   useEffect(() => {
+    if (!db) return;
+    
     const fetchOrders = async () => {
       setLoading(true);
       try {
@@ -46,7 +49,7 @@ export default function OrdersPage() {
       }
     };
     fetchOrders();
-  }, []);
+  }, [db]);
 
   const sortedAndFilteredOrders = useMemo(() => {
     let filteredOrders = orders.filter(order =>

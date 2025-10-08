@@ -7,7 +7,7 @@ import Link from 'next/link';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-import { db } from '@/lib/firebase';
+import { useFirestore } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import type { FormData } from '@/lib/definitions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -22,9 +22,10 @@ export default function OrderDetailPage() {
   const router = useRouter();
   const printAreaRef = useRef<HTMLDivElement>(null);
   const { id } = params;
+  const db = useFirestore();
 
   useEffect(() => {
-    if (typeof id !== 'string') {
+    if (typeof id !== 'string' || !db) {
       setLoading(false);
       return;
     }
@@ -46,7 +47,7 @@ export default function OrderDetailPage() {
       }
     };
     fetchOrder();
-  }, [id]);
+  }, [id, db]);
 
   const totals = useMemo(() => {
     if (!order?.services) return { subtotal: 0, discountAmount: 0, ivaAmount: 0, total: 0 };
@@ -212,5 +213,3 @@ export default function OrderDetailPage() {
     </div>
   );
 }
-
-    

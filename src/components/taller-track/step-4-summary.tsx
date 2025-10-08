@@ -26,7 +26,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { LiquiMolyLogo, FullServiceLogo } from "@/components/icons";
 import { SignaturePad } from "./signature-pad";
-import { db } from "@/lib/firebase";
+import { useFirestore } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 
 type Step4Props = {
@@ -41,8 +41,17 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   const [isSaving, setIsSaving] = React.useState(false);
   const [isSaved, setIsSaved] = React.useState(false);
   const printAreaRef = React.useRef<HTMLDivElement>(null);
+  const db = useFirestore();
 
   const handleSave = () => {
+    if (!db) {
+      toast({
+        variant: "destructive",
+        title: "Error de Conexión",
+        description: "No se pudo conectar a la base de datos.",
+      });
+      return;
+    }
     if (!data.signature) {
       toast({
         variant: "destructive",
@@ -53,31 +62,24 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     }
 
     setIsSaving(true);
-
-    // Optimistic UI update
-    toast({
-      title: "Orden Guardada",
-      description: `La orden de servicio #${data.folio} ha sido guardada.`,
-    });
-    setIsSaved(true);
-    setIsSaving(false);
-
-
-    // Save to Firestore in the background
+    
     addDoc(collection(db, "serviceOrders"), data)
       .then(() => {
-        // Already handled optimistically
-        console.log(`Order ${data.folio} saved successfully.`);
+        toast({
+          title: "Orden Guardada",
+          description: `La orden de servicio #${data.folio} ha sido guardada.`,
+        });
+        setIsSaved(true);
       })
       .catch((e) => {
         console.error("Error adding document: ", e);
-        // Revert UI state or show a specific error if needed
-        setIsSaved(false);
         toast({
           variant: "destructive",
           title: "Error de Sincronización",
           description: "No se pudo guardar la orden en la nube. Revisa tu conexión.",
         });
+      }).finally(() => {
+        setIsSaving(false);
       });
   };
 
