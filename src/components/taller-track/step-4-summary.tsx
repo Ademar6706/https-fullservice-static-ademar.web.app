@@ -42,7 +42,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   const [isSaved, setIsSaved] = React.useState(false);
   const printAreaRef = React.useRef<HTMLDivElement>(null);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!data.signature) {
       toast({
         variant: "destructive",
@@ -51,25 +51,34 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
       });
       return;
     }
+
     setIsSaving(true);
-    try {
-      // Here you would typically save to Firestore
-      await addDoc(collection(db, "serviceOrders"), data);
-      toast({
-        title: "Orden Guardada",
-        description: `La orden de servicio #${data.folio} ha sido guardada.`,
+
+    // Optimistic UI update
+    toast({
+      title: "Orden Guardada",
+      description: `La orden de servicio #${data.folio} ha sido guardada.`,
+    });
+    setIsSaved(true);
+    setIsSaving(false);
+
+
+    // Save to Firestore in the background
+    addDoc(collection(db, "serviceOrders"), data)
+      .then(() => {
+        // Already handled optimistically
+        console.log(`Order ${data.folio} saved successfully.`);
+      })
+      .catch((e) => {
+        console.error("Error adding document: ", e);
+        // Revert UI state or show a specific error if needed
+        setIsSaved(false);
+        toast({
+          variant: "destructive",
+          title: "Error de Sincronización",
+          description: "No se pudo guardar la orden en la nube. Revisa tu conexión.",
+        });
       });
-      setIsSaved(true);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      toast({
-        variant: "destructive",
-        title: "Error al Guardar",
-        description: "Hubo un problema al guardar la orden de servicio.",
-      });
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   const handleGeneratePdf = async () => {
@@ -133,10 +142,6 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                   <CardDescription>
                   Revisa todos los detalles antes de finalizar la orden.
                   </CardDescription>
-              </div>
-              <div className="flex items-center gap-4">
-                  <LiquiMolyLogo className="h-8 w-auto" />
-                  <FullServiceLogo className="h-10 w-auto" />
               </div>
           </div>
            <div className="flex justify-between items-baseline text-sm pt-4">
