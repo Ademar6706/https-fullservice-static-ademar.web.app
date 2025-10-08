@@ -4,8 +4,8 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import type jsPDF from 'jspdf';
+import type html2canvas from 'html2canvas';
 
 import { useFirestore } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -63,6 +63,10 @@ export default function OrderDetailPage() {
   const handleGeneratePdf = async () => {
     const input = printAreaRef.current;
     if (!input) return;
+
+    const { default: jsPDF } = await import('jspdf');
+    const { default: html2canvas } = await import('html2canvas');
+
     document.body.classList.add('generating-pdf');
     const canvas = await html2canvas(input, { scale: 2, useCORS: true });
     document.body.classList.remove('generating-pdf');

@@ -2,8 +2,8 @@
 
 import React, { useMemo } from "react";
 import Image from "next/image";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import type jsPDF from "jspdf";
+import type html2canvas from "html2canvas";
 import { type FormData } from "@/lib/definitions";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,6 +92,9 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
   const handleGeneratePdf = async () => {
     const input = printAreaRef.current;
     if (!input) return;
+
+    const { default: jsPDF } = await import('jspdf');
+    const { default: html2canvas } = await import('html2canvas');
 
     // Temporarily add a class to style the content for PDF generation
     document.body.classList.add("generating-pdf");
