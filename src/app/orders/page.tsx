@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useFirestore } from '@/lib/firebase';
+import { useFirestore } from '@/lib/firebase/client-provider';
 import { listOrders } from '@/lib/actions';
 import type { FormData } from '@/lib/definitions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

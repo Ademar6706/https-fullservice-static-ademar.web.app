@@ -25,7 +25,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { LiquiMolyLogo, FullServiceLogo } from "@/components/icons";
 import { SignaturePad } from "./signature-pad";
-import { useFirestore } from "@/lib/firebase";
+import { useFirestore } from "@/lib/firebase/client-provider";
 import { saveOrder } from "@/lib/actions";
 
 
@@ -137,18 +137,17 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     pdf.save(`orden-servicio-${data.folio}.pdf`);
   };
 
- const totals = useMemo(() => {
-    const subtotal = data.services?.reduce(
-      (acc, item) => {
-        const priceWithoutVat = item.price / 1.16;
-        return acc + priceWithoutVat * item.quantity;
-      },
+  const totals = useMemo(() => {
+    const totalWithIva = data.services?.reduce(
+      (acc, item) => acc + item.price * item.quantity,
       0
     ) || 0;
+    const subtotal = totalWithIva / 1.16;
     const discountAmount = subtotal * ((data.discount || 0) / 100);
     const subtotalAfterDiscount = subtotal - discountAmount;
     const ivaAmount = subtotalAfterDiscount * 0.16;
     const total = subtotalAfterDiscount + ivaAmount;
+
     return { subtotal, discountAmount, ivaAmount, total };
   }, [data.services, data.discount]);
 
@@ -265,7 +264,9 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                <Separator className="my-4" />
                <div className="space-y-2 text-sm max-w-sm ml-auto">
                   <div className="flex justify-between"><span>Subtotal (sin IVA):</span> <span>${totals.subtotal.toFixed(2)}</span></div>
-                  <div className="flex justify-between"><span>Descuento ({data.discount || 0}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>
+                  {data.discount && data.discount > 0 ? (
+                    <div className="flex justify-between"><span>Descuento ({data.discount || 0}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>
+                  ) : null}
                   <div className="flex justify-between"><span>IVA (16%):</span> <span>${totals.ivaAmount.toFixed(2)}</span></div>
                   <Separator/>
                   <div className="flex justify-between font-bold text-base"><span>Total:</span> <span>${totals.total.toFixed(2)}</span></div>
@@ -325,5 +326,3 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     </>
   );
 }
-
-    

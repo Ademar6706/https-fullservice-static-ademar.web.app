@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFirestore } from "@/lib/firebase";
+import { useFirestore } from "@/lib/firebase/client-provider";
 import { getOrder } from "@/lib/actions";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
