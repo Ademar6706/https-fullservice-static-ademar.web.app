@@ -3,7 +3,11 @@ import { z } from "zod";
 export const VehicleSchema = z.object({
   customerName: z.string().min(2, "Nombre es requerido"),
   customerPhone: z.string().min(10, "Número de teléfono válido es requerido"),
-  customerEmail: z.string().email("Correo electrónico válido es requerido"),
+  customerEmail: z
+    .string()
+    .email("Correo electrónico inválido")
+    .or(z.literal(""))
+    .optional(),
   vin: z.string().length(17, "VIN debe tener 17 caracteres"),
   make: z.string().min(2, "Marca es requerida"),
   model: z.string().min(1, "Modelo es requerido"),
