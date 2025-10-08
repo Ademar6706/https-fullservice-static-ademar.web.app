@@ -60,6 +60,14 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
       });
       return;
     }
+    if (!data.folio || !data.orderDate) {
+      toast({
+        variant: "destructive",
+        title: "Datos Faltantes",
+        description: "El folio o la fecha no se han generado. Intenta de nuevo.",
+      });
+      return;
+    }
 
     setIsSaving(true);
     try {
