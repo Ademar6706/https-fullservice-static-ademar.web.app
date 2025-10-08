@@ -1,8 +1,8 @@
 'use client';
-import { FirebaseProvider, initializeFirebase } from '.';
+import { FirebaseProvider, initializeFirebase } from '@/lib/firebase';
 
 // Note: This pattern is required to avoid re-initializing firebase on every hot-reload.
-const { firebaseApp, firestore, auth } = initializeFirebase();
+const { app, firestore, auth } = initializeFirebase();
 
 /**
  * A client-side component that initializes Firebase and provides it to the rest of the app.
@@ -20,7 +20,7 @@ export default function FirebaseClientProvider({
 }: Readonly<{ children: React.ReactNode }>): JSX.Element {
   return (
     <FirebaseProvider
-      firebaseApp={firebaseApp}
+      firebaseApp={app}
       firestore={firestore}
       auth={auth}
     >
