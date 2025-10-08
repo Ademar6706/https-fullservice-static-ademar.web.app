@@ -1,20 +1,8 @@
 import Image from "next/image";
 import placeholderData from "@/lib/placeholder-images.json";
 import type { SVGProps } from "react";
+import { cn } from "@/lib/utils";
 
-const { placeholderImages } = placeholderData;
-
-const getImage = (id: string) => {
-  const image = placeholderImages.find((img) => img.id === id);
-  if (!image) {
-    // Fallback for when image is not found
-    return {
-      imageUrl: "https://picsum.photos/seed/default/200/100",
-      imageHint: "placeholder",
-    };
-  }
-  return image;
-};
 
 export function LiquiMolyLogo(props: SVGProps<SVGSVGElement> & { className?: string }) {
   return (
@@ -34,8 +22,6 @@ export function LiquiMolyLogo(props: SVGProps<SVGSVGElement> & { className?: str
     </svg>
   );
 }
-
-import { cn } from "@/lib/utils";
 
 export function FullServiceLogo(props: SVGProps<SVGSVGElement> & { className?: string }) {
   return (
