@@ -57,9 +57,10 @@ export default function OrdersPage() {
     if (sortConfig !== null) {
       filteredOrders.sort((a, b) => {
         const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+        const bValue = b[sortconfig.key];
 
-        if (aValue === undefined || bValue === undefined) return 0;
+        if (aValue === undefined || aValue === null) return 1;
+        if (bValue === undefined || bValue === null) return -1;
         
         let comparison = 0;
         if (aValue > bValue) {
