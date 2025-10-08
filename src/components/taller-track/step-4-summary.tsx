@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  FileText,
   Download,
   Save,
   RefreshCw,
@@ -138,12 +137,14 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     pdf.save(`orden-servicio-${data.folio}.pdf`);
   };
 
-  const totals = useMemo(() => {
-    const totalWithIva = data.services?.reduce(
-      (acc, item) => acc + item.price * item.quantity,
+ const totals = useMemo(() => {
+    const subtotal = data.services?.reduce(
+      (acc, item) => {
+        const priceWithoutVat = item.price / 1.16;
+        return acc + priceWithoutVat * item.quantity;
+      },
       0
     ) || 0;
-    const subtotal = totalWithIva / 1.16;
     const discountAmount = subtotal * ((data.discount || 0) / 100);
     const subtotalAfterDiscount = subtotal - discountAmount;
     const ivaAmount = subtotalAfterDiscount * 0.16;
@@ -162,20 +163,26 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     <>
       <div id="print-area" ref={printAreaRef} className="bg-white p-6 print-container-pdf">
         <CardHeader className="p-0 mb-6">
-          <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-4">
-                <LiquiMolyLogo className="w-20 h-20" />
-                <FullServiceLogo className="w-28 h-14" />
-              </div>
-              <div className="text-right">
+           <table className="w-full mb-4">
+            <tbody>
+              <tr>
+                <td className="w-1/2 align-middle">
+                  <div className="flex items-center gap-4">
+                    <LiquiMolyLogo className="w-20 h-20" />
+                    <FullServiceLogo className="w-28 h-14" />
+                  </div>
+                </td>
+                <td className="w-1/2 text-right align-top">
                   <CardTitle className="font-headline text-2xl">
-                  Orden de Servicio
+                    Orden de Servicio
                   </CardTitle>
                   <CardDescription>
-                  Revisa todos los detalles.
+                    Revisa todos los detalles.
                   </CardDescription>
-              </div>
-          </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
            <div className="flex justify-between items-baseline text-sm pt-4 border-t">
               <p>Folio: <span className="font-semibold text-primary">{data.folio}</span></p>
               <p>Fecha: <span className="font-semibold">{data.orderDate}</span></p>
@@ -186,12 +193,27 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
             <CardHeader>
               <CardTitle>Detalles del Cliente y Vehículo</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div><strong>Cliente:</strong> {data.customerName}</div>
-              <div><strong>Teléfono:</strong> {data.customerPhone}</div>
-              <div><strong>Email:</strong> {data.customerEmail}</div>
-              <div><strong>Vehículo:</strong> {data.year} {data.make} {data.model}</div>
-              <div className="md:col-span-2"><strong>VIN:</strong> {data.vin}</div>
+            <CardContent className="text-sm">
+                <table className="w-full">
+                    <tbody>
+                        <tr>
+                            <td className="py-1 pr-4 w-1/4"><strong>Cliente:</strong></td>
+                            <td className="py-1 pr-4 w-1/4">{data.customerName}</td>
+                            <td className="py-1 pr-4 w-1/4"><strong>Teléfono:</strong></td>
+                            <td className="py-1 pr-4 w-1/4">{data.customerPhone}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-1 pr-4"><strong>Email:</strong></td>
+                            <td className="py-1 pr-4">{data.customerEmail}</td>
+                            <td className="py-1 pr-4"><strong>Vehículo:</strong></td>
+                            <td className="py-1 pr-4">{data.year} {data.make} {data.model}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-1 pr-4"><strong>VIN:</strong></td>
+                            <td className="py-1 pr-4" colSpan={3}>{data.vin}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </CardContent>
           </Card>
 
@@ -199,13 +221,28 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
             <CardHeader>
               <CardTitle>Checklist de Recepción</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-              {Object.entries(data.checklist || {}).map(([key, value]) => {
-                if (key === 'notes' || !value) return null;
-                const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
-                return <div key={key}><strong>{formattedKey}:</strong> <span className={value === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{value}</span></div>
-              })}
-               {data.checklist?.notes && <div className="col-span-full pt-2"><strong>Observaciones:</strong> {data.checklist.notes}</div>}
+            <CardContent className="text-sm">
+                 <table className="w-full">
+                    <tbody>
+                        <tr>
+                           <td className="py-1 pr-4 w-1/3"><strong>Llantas:</strong> <span className={data.checklist?.tires === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{data.checklist?.tires}</span></td>
+                           <td className="py-1 pr-4 w-1/3"><strong>Frenos:</strong> <span className={data.checklist?.brakes === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{data.checklist?.brakes}</span></td>
+                           <td className="py-1 pr-4 w-1/3"><strong>Luces:</strong> <span className={data.checklist?.lights === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{data.checklist?.lights}</span></td>
+                        </tr>
+                         <tr>
+                           <td className="py-1 pr-4"><strong>Líquidos:</strong> <span className={data.checklist?.liquidos === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{data.checklist?.liquidos}</span></td>
+                           <td className="py-1 pr-4"><strong>Batería:</strong> <span className={data.checklist?.bateria === 'Requiere Atención' ? 'text-destructive font-semibold' : ''}>{data.checklist?.bateria}</span></td>
+                           <td></td>
+                        </tr>
+                        {data.checklist?.notes && (
+                        <tr>
+                            <td colSpan={3} className="pt-2 mt-2 border-t">
+                                <strong>Observaciones:</strong> {data.checklist.notes}
+                            </td>
+                        </tr>
+                        )}
+                    </tbody>
+                </table>
             </CardContent>
           </Card>
           
@@ -222,7 +259,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
                <Separator className="my-4" />
                <div className="space-y-2 text-sm max-w-sm ml-auto">
                   <div className="flex justify-between"><span>Subtotal (sin IVA):</span> <span>${totals.subtotal.toFixed(2)}</span></div>
-                  {data.discount && data.discount > 0 && <div className="flex justify-between"><span>Descuento ({data.discount}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>}
+                  <div className="flex justify-between"><span>Descuento ({data.discount || 0}%):</span> <span>-${totals.discountAmount.toFixed(2)}</span></div>
                   <div className="flex justify-between"><span>IVA (16%):</span> <span>${totals.ivaAmount.toFixed(2)}</span></div>
                   <Separator/>
                   <div className="flex justify-between font-bold text-base"><span>Total:</span> <span>${totals.total.toFixed(2)}</span></div>
@@ -262,7 +299,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
           Anterior
         </Button>
         <div className="flex gap-2">
-           <Button onClick={handleShare} variant="outline" size="lg">
+           <Button onClick={handleShare} variant="outline" size="lg" disabled={!data.customerPhone}>
             <MessageSquare className="mr-2 h-4 w-4" /> Compartir
           </Button>
           <Button onClick={handleGeneratePdf} variant="outline" size="lg">
