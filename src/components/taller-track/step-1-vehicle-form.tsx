@@ -138,7 +138,7 @@ export default function Step1VehicleForm({
                 name="vin"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>VIN</FormLabel>
+                    <FormLabel>VIN ultimos 8 digitos</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Número de Identificación Vehicular"
