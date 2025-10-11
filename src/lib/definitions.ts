@@ -9,7 +9,7 @@ export const VehicleSchema = z.object({
     .email("Correo electrónico inválido")
     .or(z.literal(""))
     .optional(),
-  vin: z.string().length(17, "VIN debe tener 17 caracteres"),
+  vin: z.string().length(8, "VIN debe tener 8 caracteres"),
   make: z.string().min(2, "Marca es requerida"),
   model: z.string().min(1, "Modelo es requerido"),
   year: z.coerce
