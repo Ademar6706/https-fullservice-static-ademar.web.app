@@ -152,7 +152,22 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
 
 
   const handleShare = () => {
-    const summaryText = `*Presupuesto de Servicio - Folio: ${data.folio}*\n\n*Cliente:* ${data.customerName}\n*Vehículo:* ${data.year} ${data.make} ${data.model}\n\n*Servicios:*\n${data.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`).join('\n')}\n\n*Subtotal (sin IVA):* $${totals.subtotal.toFixed(2)}\n*Descuento (${data.discount}%):* -$${totals.discountAmount.toFixed(2)}\n*IVA (16%):* $${totals.ivaAmount.toFixed(2)}\n*Total:* $${totals.total.toFixed(2)}`;
+    const textParts = [
+      `*Presupuesto de Servicio - Folio: ${data.folio}*`,
+      ``,
+      `*Cliente:* ${data.customerName}`,
+      `*Vehículo:* ${data.year} ${data.make} ${data.model}`,
+      ``,
+      `*Servicios:*`,
+      ...(data.services?.map(s => `- ${s.name} (Qty: ${s.quantity})`) || []),
+      ``,
+      `*Subtotal (sin IVA):* $${totals.subtotal.toFixed(2)}`,
+      `*Descuento (${data.discount}%):* -$${totals.discountAmount.toFixed(2)}`,
+      `*IVA (16%):* $${totals.ivaAmount.toFixed(2)}`,
+      `*Total:* $${totals.total.toFixed(2)}`
+    ];
+
+    const summaryText = textParts.join('\n');
     const whatsappUrl = `https://wa.me/${data.customerPhone}?text=${encodeURIComponent(summaryText)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -333,5 +348,3 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     </>
   );
 }
-
-    
