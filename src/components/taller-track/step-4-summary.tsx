@@ -279,12 +279,16 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
               <div className="no-print">
                 <SignaturePad onEnd={(signature) => updateData({ signature })} signature={data.signature || null} />
               </div>
-               {data.signature && (
-                <div className="mt-4 border-t pt-4">
-                  <p className="text-sm font-semibold mb-2">Firma del Cliente:</p>
-                  <Image src={data.signature} alt="Firma del cliente" width={200} height={100} className="print-signature bg-white" />
-                </div>
-              )}
+               <div className="hidden print-block mt-4 border-t pt-4">
+                  {data.signature ? (
+                    <>
+                      <p className="text-sm font-semibold mb-2">Firma del Cliente:</p>
+                      <Image src={data.signature} alt="Firma del cliente" width={200} height={100} className="print-signature bg-white" />
+                    </>
+                  ) : (
+                    <div className="h-24 border-b"><p className="text-sm text-muted-foreground">Firma pendiente</p></div>
+                  )}
+               </div>
               <p className="text-xs text-muted-foreground mt-4">
                 Al firmar, autorizo que se realice el trabajo de reparación junto con el material necesario y acepto los términos y condiciones.
               </p>

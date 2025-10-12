@@ -105,6 +105,10 @@ body {
     display: none !important;
   }
   
+  .print-block {
+    display: block !important;
+  }
+
   .print-container-pdf {
     padding: 0 !important;
     margin: 0 !important;
