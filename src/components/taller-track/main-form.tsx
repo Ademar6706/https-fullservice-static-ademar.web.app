@@ -23,6 +23,13 @@ const getInitialFormData = (): Partial<FormData> => ({
   signature: "",
 });
 
+const steps = [
+  { id: 1, name: "Vehículo y Cliente" },
+  { id: 2, name: "Checklist" },
+  { id: 3, name: "Presupuesto" },
+  { id: 4, name: "Resumen y Firma" },
+];
+
 export function MainForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<FormData>>({});
