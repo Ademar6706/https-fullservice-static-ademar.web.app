@@ -108,7 +108,7 @@ export default function OrdersPage() {
             </div>
           </div>
           <Button asChild variant="outline">
-            <Link href="/">
+            <Link href="/reception">
               <Home className="mr-2 h-4 w-4" />
               Volver a la Recepción
             </Link>

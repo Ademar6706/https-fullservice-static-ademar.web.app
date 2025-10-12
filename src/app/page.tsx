@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 export default function Home() {
   const router = useRouter()
   useEffect(() => {
-    router.replace('/orders')
+    router.replace('/reception')
   }, [router])
 
   return (
