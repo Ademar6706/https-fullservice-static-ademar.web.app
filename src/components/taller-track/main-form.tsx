@@ -86,7 +86,7 @@ export function MainForm() {
     });
   }
 
-  if (!isClient || !formData.folio) {
+  if (!isClient) {
     return (
       <div className="flex justify-center items-center h-96">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
