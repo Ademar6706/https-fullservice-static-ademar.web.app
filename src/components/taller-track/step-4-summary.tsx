@@ -23,7 +23,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { LiquiMolyLogo, FullServiceLogo } from "@/components/icons";
 import { SignaturePad } from "./signature-pad";
 import { useFirestore } from "@/lib/firebase/client-provider";
 import { saveOrder } from "@/lib/actions";
@@ -167,8 +166,8 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
               <tr>
                 <td className="w-1/2 align-middle">
                   <div className="flex items-center gap-4">
-                    <LiquiMolyLogo className="w-20 h-20" />
-                    <FullServiceLogo className="w-28 h-14" />
+                    <Image src="/liqui-moly-logo.png" alt="Liqui Moly Logo" width={100} height={100} className="h-20 w-auto" />
+                    <Image src="/full-service-logo.png" alt="Full Service Logo" width={120} height={50} className="h-14 w-auto" />
                   </div>
                 </td>
                 <td className="w-1/2 text-right align-top">
