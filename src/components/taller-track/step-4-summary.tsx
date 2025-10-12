@@ -165,10 +165,7 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
             <tbody>
               <tr>
                 <td className="w-1/2 align-middle">
-                  <div className="flex items-center gap-4">
-                    <Image src="/liqui-moly-logo.png" alt="Liqui Moly Logo" width={100} height={100} className="h-20 w-auto" />
-                    <Image src="/full-service-logo.png" alt="Full Service Logo" width={120} height={50} className="h-14 w-auto" />
-                  </div>
+                   <Image src="/fullservice.png" alt="Full Service Logo" width={250} height={80} className="h-20 w-auto" />
                 </td>
                 <td className="w-1/2 text-right align-top">
                   <CardTitle className="font-headline text-2xl">
