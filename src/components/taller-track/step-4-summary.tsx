@@ -164,15 +164,20 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
            <table className="w-full mb-4">
             <tbody>
               <tr>
-                <td className="w-1/2 align-middle">
-                   <Image src="/fullservice.png" alt="Full Service Logo" width={250} height={80} className="h-20 w-auto" />
+                <td className="w-1/4 align-middle">
+                   <Image src="/fullservice.png" alt="Full Service Logo" width={200} height={64} className="h-16 w-auto" />
                 </td>
-                <td className="w-1/2 text-right align-top">
-                  <CardTitle className="font-headline text-2xl">
+                <td className="w-1/2 text-center align-middle text-xs">
+                  <p className="font-bold text-sm">FULL SERVICE</p>
+                  <p>Carr. Internacional 471, La Enramada 1, 59857 Jacona de Plancarte, Mich.</p>
+                  <p>Tel. 351 181 4675</p>
+                </td>
+                <td className="w-1/4 text-right align-top">
+                  <CardTitle className="font-headline text-xl">
                     Orden de Servicio
                   </CardTitle>
                   <CardDescription>
-                    Folio: {data.folio}
+                    Folio: <span className="font-semibold">{data.folio}</span>
                   </CardDescription>
                 </td>
               </tr>
@@ -328,3 +333,5 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     </>
   );
 }
+
+    
