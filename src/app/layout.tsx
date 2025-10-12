@@ -1,7 +1,9 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { ClientOnly } from '@/components/client-only';
 import { FirebaseClientProvider } from '@/lib/firebase/client-provider';
+import { inter } from './fonts';
 
 export const metadata: Metadata = {
   title: 'Recepción de Vehículos Full Service Liqui Moly México',
@@ -15,15 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
-        <FirebaseClientProvider>
-          {children}
-        </FirebaseClientProvider>
+      <head />
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+        <ClientOnly>
+          <FirebaseClientProvider>
+            {children}
+          </FirebaseClientProvider>
+        </ClientOnly>
         <Toaster />
       </body>
     </html>

@@ -10,13 +10,6 @@ import Step4Summary from "./step-4-summary";
 import { CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-const steps = [
-  { id: 1, name: "Datos" },
-  { id: 2, name: "Checklist" },
-  { id: 3, name: "Presupuesto" },
-  { id: 4, name: "Resumen" },
-];
-
 const getInitialFormData = (): Partial<FormData> => ({
   checklist: {
     tires: "N/A",
@@ -32,7 +25,7 @@ const getInitialFormData = (): Partial<FormData> => ({
 
 export function MainForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<FormData>>(getInitialFormData());
+  const [formData, setFormData] = useState<Partial<FormData>>({});
   const [isClient, setIsClient] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -40,6 +33,7 @@ export function MainForm() {
     // This effect runs only on the client, after the component has mounted.
     // This prevents hydration mismatches by setting client-specific values here.
     setFormData((prev) => ({
+        ...getInitialFormData(),
         ...prev,
         folio: `FS-${Date.now().toString().slice(-6)}`,
         orderDate: new Date().toLocaleDateString("es-MX", {
