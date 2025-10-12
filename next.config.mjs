@@ -5,4 +5,4 @@ const nextConfig = {
   trailingSlash: true // asegura rutas terminadas en /
 };
 
-module.exports = nextConfig;
+export default nextConfig;
