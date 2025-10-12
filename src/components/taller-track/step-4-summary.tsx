@@ -152,6 +152,8 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
 
 
   const handleShare = () => {
+    if (!data.customerPhone) return;
+
     const textParts = [
       `*Presupuesto de Servicio - Folio: ${data.folio}*`,
       ``,
@@ -168,7 +170,8 @@ export default function Step4Summary({ onPrev, onRestart, data, updateData }: St
     ];
 
     const summaryText = textParts.join('\n');
-    const whatsappUrl = `https://wa.me/${data.customerPhone}?text=${encodeURIComponent(summaryText)}`;
+    const cleanPhoneNumber = data.customerPhone.replace(/\D/g, '');
+    const whatsappUrl = `https://wa.me/${cleanPhoneNumber}?text=${encodeURIComponent(summaryText)}`;
     window.open(whatsappUrl, '_blank');
   };
 
