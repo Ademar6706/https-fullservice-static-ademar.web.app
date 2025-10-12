@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardTitle, CardDescription, CardHeader } from '@/components/ui/card';
+import Image from 'next/image';
+import { Card } from '@/components/ui/card';
 import { MainForm } from '@/components/taller-track/main-form';
-import { LiquiMolyLogo, FullServiceLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ListOrdered } from 'lucide-react';
 
@@ -13,10 +13,7 @@ export default function ReceptionPage() {
       <div className="w-full max-w-5xl">
         <header className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex -space-x-4">
-              <LiquiMolyLogo className="h-20 w-20" />
-              <FullServiceLogo className="h-24 w-24" />
-            </div>
+            <Image src="/fullservice.png" alt="Full Service Logo" width={250} height={80} className="h-20 w-auto" />
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-primary font-headline">Recepción de Vehículos</h1>
               <p className="text-lg text-muted-foreground">Full Service · Liqui Moly México</p>
