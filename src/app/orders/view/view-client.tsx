@@ -1,10 +1,13 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from 'next/link';
 import { useFirestore } from "@/lib/firebase/client-provider";
 import { getOrder } from "@/lib/actions";
 import { useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type OrderData = Record<string, any> | null;
 
@@ -58,11 +61,19 @@ export default function OrderViewClient() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-4 bg-slate-50 min-h-screen">
-       <header className="mb-6">
-        <h1 className="text-3xl sm:text-4xl font-bold text-primary font-headline">
-            Orden de Servicio: {order.folio || "(sin folio)"}
-        </h1>
-        <p className="text-lg text-muted-foreground">{order.orderDate}</p>
+       <header className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-primary font-headline">
+              Orden de Servicio: {order.folio || "(sin folio)"}
+          </h1>
+          <p className="text-lg text-muted-foreground">{order.orderDate}</p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/">
+            <Home className="mr-2 h-4 w-4" />
+            Volver a la Recepción
+          </Link>
+        </Button>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-base">
