@@ -8,7 +8,7 @@ import { inter } from './fonts';
 export const metadata: Metadata = {
   title: 'Recepción de Vehículos Full Service Liqui Moly México',
   description: 'Vehicle Service Management',
-  manifest: '/manifest.json',
+  manifest: '/manifest.json?v=3',
 };
 
 export default function RootLayout({
@@ -19,7 +19,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico?v=3" />
+        <meta name="theme-color" content="#E2231A" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <ClientOnly>
