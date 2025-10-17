@@ -1,3 +1,4 @@
+studio-1619766935:~/studio{main}$
 # Recepción de Vehículos · Full Service · Liqui Moly México
 
 Esta es una aplicación web para la recepción de vehículos y control de servicios para talleres Full Service · Liqui Moly México.
